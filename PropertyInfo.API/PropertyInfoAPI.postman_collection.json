@@ -1,0 +1,61 @@
+{
+	"info": {
+		"_postman_id": "31182757-0af7-439b-a6fb-94cdc3eb586b",
+		"name": "PropertyInfoAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "2550182"
+	},
+	"item": [
+		{
+			"name": "GET properties, searched",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:{{portNumber}}/api/v1/properties?searchQuery=one",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "{{portNumber}}",
+					"path": [
+						"api",
+						"v1",
+						"properties"
+					],
+					"query": [
+						{
+							"key": "searchQuery",
+							"value": "one"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Authentication info to get a token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"Owner\",\r\n    \"password\": \"This is a relatively long sentence that acts as my password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://localhost:{{portNumber}}/api/authentication/authenticate"
+			},
+			"response": []
+		}
+	]
+}

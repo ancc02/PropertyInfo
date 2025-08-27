@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PropertyInfo.API</name>
+    </assembly>
+    <members>
+        <member name="T:PropertyInfo.API.Entities.Owner">
+            <summary>
+            Info of Owner
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Entities.Property">
+            <summary>
+            Info of Property
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Entities.PropertyImage">
+            <summary>
+            info of PropertyImage
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Entities.PropertyTrace">
+            <summary>
+            info of PropertyTrace
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Migrations.PropertyInfoUpdateDatabase">
+            <inheritdoc />
+        </member>
+        <member name="M:PropertyInfo.API.Migrations.PropertyInfoUpdateDatabase.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:PropertyInfo.API.Migrations.PropertyInfoUpdateDatabase.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:PropertyInfo.API.Migrations.PropertyInfoUpdateDatabase.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
