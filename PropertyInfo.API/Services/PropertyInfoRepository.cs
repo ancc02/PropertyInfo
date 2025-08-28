@@ -51,7 +51,7 @@ namespace PropertyInfo.API.Services
         {
             propertyInfo.IdOwner = idOwner;
             _context.Properties.Add(propertyInfo);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
 
             return propertyInfo.IdProperty;
         }
@@ -64,7 +64,7 @@ namespace PropertyInfo.API.Services
             currentProperty.CodeInternal = propertyInfo.CodeInternal;
             currentProperty.Price = propertyInfo.Price;
             _context.Properties.Entry(currentProperty).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task<Property?> GetPropertyAsync(int idProperty)

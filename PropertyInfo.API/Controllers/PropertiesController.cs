@@ -20,6 +20,7 @@ namespace PropertyInfo.API.Controllers
         private readonly ILogger<PropertiesController> _logger;
         private readonly IPropertyInfoRepository _propertyInfoRepository;
         private readonly IOwnerInfoRepository _ownerRepository;
+        private readonly IPropertyImageInfoRepository _propertyImageInfoRepository;
 
         private readonly IMapper _mapper;
         const int maxCitiesPageSize = 20;
@@ -27,6 +28,7 @@ namespace PropertyInfo.API.Controllers
         public PropertiesController(ILogger<PropertiesController> logger,
             IPropertyInfoRepository propertyInfoRepository,
             IOwnerInfoRepository ownerRepository,
+            IPropertyImageInfoRepository propertyImageInfoRepository,
             IMapper mapper)
         {
             _logger = logger ??
@@ -37,6 +39,9 @@ namespace PropertyInfo.API.Controllers
 
             _ownerRepository = ownerRepository ??
                 throw new ArgumentNullException(nameof(ownerRepository));
+
+            _propertyImageInfoRepository = propertyImageInfoRepository ??
+                throw new ArgumentNullException(nameof(propertyImageInfoRepository));
 
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
@@ -166,6 +171,54 @@ namespace PropertyInfo.API.Controllers
                 await _propertyInfoRepository.SaveChangesAsync();
 
                 return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(PropertiesController)}");
+                return StatusCode(500, "We have problems with your request, contact your provider");
+            }
+        }
+
+        [HttpPost("image/{idProperty}", Name = "CreateImageProperty")]
+        public async Task<ActionResult> CreateImageProperty(int idProperty, IFormFile file)
+        {
+            try
+            {
+                var propertyInfo = await _propertyInfoRepository.GetPropertyAsync(idProperty);
+                if (propertyInfo == null)
+                {
+                    return NotFound("property doesn´t exist");
+                }
+                // Validate the input. Put a limit on filesize to avoid large uploads attacks. 
+                // Only accept .pdf files (check content-type)
+                if (file.Length == 0 || file.Length > 20971520 || (file.ContentType != "image/jpg" && file.ContentType != "image/jpeg"))
+                {
+                    return BadRequest("No file or an invalid one has been inputted.");
+                }
+
+                // Create the file path.  Avoid using file.FileName, as an attacker can provide a
+                // malicious one, including full paths or relative paths.  
+                var pathImage = $"Images\\uploaded_file_{idProperty}-{propertyInfo.CodeInternal}.jpg";
+                var path = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    pathImage);
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                var propertyImageInfo = new PropertyImage();
+                propertyImageInfo.IdProperty = propertyInfo.IdProperty;
+                propertyImageInfo.Enabled = true;
+                propertyImageInfo.File = pathImage;
+
+                var resultId = await _propertyImageInfoRepository.AddPropertyImageInfo(propertyImageInfo);
+
+                propertyImageInfo.IdPropertyImage = resultId;
+                var propertyImageInfoResult = new PropertyImageDto();
+                _mapper.Map(propertyImageInfo, propertyImageInfoResult);
+
+                return Ok(new { message = "Your file has been uploaded successfully.", imageInfo = propertyImageInfoResult });
             }
             catch (Exception ex)
             {

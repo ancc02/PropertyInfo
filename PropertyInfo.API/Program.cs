@@ -26,9 +26,6 @@ Log.Logger = new LoggerConfiguration()
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Logging.ClearProviders();
-//builder.Logging.AddConsole();
-
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 if (environment == Environments.Development)
 {
@@ -47,25 +44,8 @@ builder.Services.AddControllers(options =>
 .AddXmlDataContractSerializerFormatters();
 
 builder.Services.AddProblemDetails();
-//builder.Services.AddProblemDetails(options =>
-//{
-//    options.CustomizeProblemDetails = ctx =>
-//    {
-//        ctx.ProblemDetails.Extensions.Add("additionalInfo",
-//            "Additional info example");
-//        ctx.ProblemDetails.Extensions.Add("server", 
-//            Environment.MachineName);
-//    };
-//});
 
-//builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
-
-//#if DEBUG
-//builder.Services.AddTransient<IMailService, LocalMailService>();
-//#else 
-//builder.Services.AddTransient<IMailService, CloudMailService>();
-//#endif
-//builder.Services.AddSingleton<CitiesDataStore>();
+// SQL Lite conection
 
 //builder.Services.AddDbContext<PropertyInfoContext>(
 //    dbContextOptions => dbContextOptions.UseSqlite(
@@ -78,6 +58,7 @@ builder.Services.AddDbContext<PropertyInfoContext>(
 
 builder.Services.AddTransient<IPropertyInfoRepository, PropertyInfoRepository>();
 builder.Services.AddTransient<IOwnerInfoRepository, OwnerInfoRepository>();
+builder.Services.AddTransient<IPropertyImageInfoRepository, PropertyImageInfoRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -182,20 +163,20 @@ if (!app.Environment.IsDevelopment())
 app.UseForwardedHeaders();
 
 
-//if (app.Environment.IsDevelopment())
-//{
-app.UseSwagger();
-app.UseSwaggerUI(setupAction =>
+if (app.Environment.IsDevelopment())
 {
-    var descriptions = app.DescribeApiVersions();
-    foreach (var description in descriptions)
+    app.UseSwagger();
+    app.UseSwaggerUI(setupAction =>
     {
-        setupAction.SwaggerEndpoint(
-            $"/swagger/{description.GroupName}/swagger.json",
-            description.GroupName.ToUpperInvariant());
-    }
-});
-//}
+        var descriptions = app.DescribeApiVersions();
+        foreach (var description in descriptions)
+        {
+            setupAction.SwaggerEndpoint(
+                $"/swagger/{description.GroupName}/swagger.json",
+                description.GroupName.ToUpperInvariant());
+        }
+    });
+}
 
 app.UseHttpsRedirection();
 
