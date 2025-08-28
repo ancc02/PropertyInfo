@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PropertyInfo.API.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace PropertyInfo.API.Models
 {
