@@ -7,12 +7,10 @@ namespace PropertyInfo.API.Services
     public class PropertyInfoRepository : IPropertyInfoRepository
     {
         private readonly PropertyInfoContext _context;
-        private readonly IOwnerInfoRepository _ownerRepository;
 
-        public PropertyInfoRepository(PropertyInfoContext context, IOwnerInfoRepository ownerRepository)
+        public PropertyInfoRepository(PropertyInfoContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _ownerRepository = ownerRepository;
         }
 
         public async Task<(IEnumerable<Property>, PaginationMetadata)> GetPropertiesAsync(
@@ -50,14 +48,9 @@ namespace PropertyInfo.API.Services
 
         public async Task AddPropertyInfo(int idOwner, Property propertyInfo)
         {
-            var owner = await _ownerRepository.GetOwnerAsync(idOwner);
-            if (owner != null)
-            {
-                propertyInfo.IdOwner = owner.IdOwner;
-                _context.Properties.Add(propertyInfo);
-            }
-
-            await SaveChangesAsync();
+            propertyInfo.IdOwner = idOwner;
+            _context.Properties.Add(propertyInfo);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> SaveChangesAsync()

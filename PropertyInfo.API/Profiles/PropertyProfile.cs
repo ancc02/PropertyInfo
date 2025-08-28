@@ -7,6 +7,7 @@ namespace PropertyInfo.API.Profiles
         public PropertyProfile()
         {
             CreateMap<Entities.Property, Models.PropertyDto>();
+            CreateMap<Models.PropertyDto, Entities.Property>();
         }
     }
 }
