@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "31182757-0af7-439b-a6fb-94cdc3eb586b",
+		"_postman_id": "a2863f0a-4e21-407f-a70f-e92fd219482a",
 		"name": "PropertyInfoAPI",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "2550182"
@@ -18,7 +18,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:{{portNumber}}/api/v1/properties?searchQuery=one",
+					"raw": "https://localhost:{{portNumber}}/api/v1/properties?searchQuery=pro",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -32,7 +32,7 @@
 					"query": [
 						{
 							"key": "searchQuery",
-							"value": "one"
+							"value": "pro"
 						}
 					]
 				}
@@ -41,6 +41,20 @@
 		},
 		{
 			"name": "POST Authentication info to get a token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"portNumber\",\"7169\");\r",
+							"pm.globals.set(\"BearerToken\",\"Bearer \" + pm.response.text());\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -53,7 +67,79 @@
 						}
 					}
 				},
-				"url": "https://localhost:{{portNumber}}/api/authentication/authenticate"
+				"url": "https://localhost:7169/api/authentication/authenticate"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Property",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"Name\": \"Property number six\",\r\n\"Address\" : \"address property number six\",\r\n\"Price\" : 1500000,\r\n\"CodeInternal\" : \"0101\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://localhost:{{portNumber}}/api/v1/properties/owner/3"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Property",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"Name\": \"Property number update\",\r\n\"Address\" : \"address property number update\",\r\n\"Price\" : 1500000,\r\n\"CodeInternal\" : \"0101\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://localhost:{{portNumber}}/api/v1/properties/property/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Property Price",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{BearerToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n      \"op\": \"replace\",\r\n      \"path\": \"/price\",\r\n      \"value\": 1300000\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://localhost:{{portNumber}}/api/v1/properties/price/1"
 			},
 			"response": []
 		}
