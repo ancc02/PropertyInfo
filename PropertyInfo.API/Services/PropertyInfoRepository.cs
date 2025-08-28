@@ -29,7 +29,8 @@ namespace PropertyInfo.API.Services
             {
                 searchQuery = searchQuery.Trim();
                 collection = collection.Where(a => a.Name.Contains(searchQuery)
-                    || (a.Address != null && a.Address.Contains(searchQuery)));
+                    || (a.Address != null && a.Address.Contains(searchQuery))
+                    || (a.CodeInternal != null && a.CodeInternal.Contains(searchQuery)));
             }
 
             var totalItemCount = await collection.CountAsync();
@@ -46,11 +47,30 @@ namespace PropertyInfo.API.Services
         }
 
 
-        public async Task AddPropertyInfo(int idOwner, Property propertyInfo)
+        public async Task<int> AddPropertyInfo(int idOwner, Property propertyInfo)
         {
             propertyInfo.IdOwner = idOwner;
             _context.Properties.Add(propertyInfo);
             await _context.SaveChangesAsync();
+
+            return propertyInfo.IdProperty;
+        }
+
+        public async Task UpdatePropertyInfo(int idProperty, Property propertyInfo)
+        {
+            var currentProperty = await GetPropertyAsync(idProperty);
+            currentProperty.Name = propertyInfo.Name;
+            currentProperty.Address = propertyInfo.Address;
+            currentProperty.CodeInternal = propertyInfo.CodeInternal;
+            currentProperty.Price = propertyInfo.Price;
+            _context.Properties.Entry(currentProperty).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Property?> GetPropertyAsync(int idProperty)
+        {
+            return await _context.Properties
+                  .Where(c => c.IdProperty == idProperty).FirstOrDefaultAsync();
         }
 
         public async Task<bool> SaveChangesAsync()

@@ -1,9 +1,11 @@
 ﻿using Asp.Versioning;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
+using PropertyInfo.API.Entities;
 using PropertyInfo.API.Models;
 using PropertyInfo.API.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace PropertyInfo.API.Controllers
@@ -64,7 +66,7 @@ namespace PropertyInfo.API.Controllers
                 _logger.LogError(ex, $"Error in {nameof(PropertiesController)}");
                 return StatusCode(500, "We have problems with your request, contact your provider");
             }
-            
+
         }
 
         [HttpPost("owner/{idOwner}", Name = "AddProperty")]
@@ -77,9 +79,11 @@ namespace PropertyInfo.API.Controllers
                 {
                     return NotFound("owner doesn´t exist");
                 }
-                var finalProperty = _mapper.Map<Entities.Property>(property);               
-                await _propertyInfoRepository.AddPropertyInfo(
+                var finalProperty = _mapper.Map<Entities.Property>(property);
+                var resultId = await _propertyInfoRepository.AddPropertyInfo(
                     idOwner, finalProperty);
+
+                finalProperty.IdProperty = resultId;
 
                 var createdPropertyToReturn =
                     _mapper.Map<Models.PropertyDto>(finalProperty);
@@ -95,7 +99,79 @@ namespace PropertyInfo.API.Controllers
             {
                 _logger.LogError(ex, $"Error in {nameof(PropertiesController)}");
                 return StatusCode(500, "We have problems with your request, contact your provider");
-            }            
+            }
+        }
+
+        [HttpPost("property/{idProperty}", Name = "UpdateProperty")]
+        public async Task<ActionResult> UpdateProperty(int idProperty, PropertyDto property)
+        {
+            try
+            {
+                var propertyInfo = await _propertyInfoRepository.GetPropertyAsync(idProperty);
+                if (propertyInfo == null)
+                {
+                    return NotFound("property doesn´t exist");
+                }
+                var finalProperty = _mapper.Map<Entities.Property>(property);
+                await _propertyInfoRepository.UpdatePropertyInfo(
+                    idProperty, finalProperty);
+
+                finalProperty.IdProperty = idProperty;
+
+                var createdPropertyToReturn =
+                    _mapper.Map<Models.PropertyDto>(finalProperty);
+
+                return CreatedAtRoute("GetProperties",
+                     new
+                     {
+                         name = createdPropertyToReturn.Name,
+                     },
+                     createdPropertyToReturn);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(PropertiesController)}");
+                return StatusCode(500, "We have problems with your request, contact your provider");
+            }
+        }
+
+        [HttpPatch("price/{IdProperty}")]
+        public async Task<ActionResult> UpdatePropertyPrice(int IdProperty,
+           JsonPatchDocument<PropertyForUpdateDto> patchDocument)
+        {
+            try
+            {
+                var propertyInfo = await _propertyInfoRepository.GetPropertyAsync(IdProperty);
+                if (propertyInfo == null)
+                {
+                    return NotFound("property doesn´t exist");
+                }
+
+                var propertyInfoToPatch = _mapper.Map<PropertyForUpdateDto>(
+                propertyInfo);
+
+                patchDocument.ApplyTo(propertyInfoToPatch, ModelState);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                if (!TryValidateModel(propertyInfoToPatch))
+                {
+                    return BadRequest(ModelState);
+                }
+
+                _mapper.Map(propertyInfoToPatch, propertyInfo);
+                await _propertyInfoRepository.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(PropertiesController)}");
+                return StatusCode(500, "We have problems with your request, contact your provider");
+            }
         }
     }
 }

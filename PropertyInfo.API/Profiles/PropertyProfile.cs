@@ -8,6 +8,8 @@ namespace PropertyInfo.API.Profiles
         {
             CreateMap<Entities.Property, Models.PropertyDto>();
             CreateMap<Models.PropertyDto, Entities.Property>();
+            CreateMap<Entities.Property, Models.PropertyForUpdateDto>();
+            CreateMap<Models.PropertyForUpdateDto, Entities.Property>();
         }
     }
 }
