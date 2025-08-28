@@ -79,6 +79,40 @@ namespace PropertyInfoTest
             var testController = new PropertiesController(mockLogger.Object, mockPropertyInfoRepository.Object,
                 mockOwnerInfoRepository.Object, mockPropertyImageInfoRepository.Object, mapper);
         }
+
+        [Test]
+        public async Task TestUpdatePropertyPrice()
+        {
+            var mockLogger = new Mock<ILogger<PropertiesController>>();
+            var mockPropertyInfoRepository = new Mock<IPropertyInfoRepository>();
+            var mockOwnerInfoRepository = new Mock<IOwnerInfoRepository>();
+            var mockPropertyImageInfoRepository = new Mock<IPropertyImageInfoRepository>();
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new PropertyProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+            
+            var testController = new PropertiesController(mockLogger.Object, mockPropertyInfoRepository.Object,
+                mockOwnerInfoRepository.Object, mockPropertyImageInfoRepository.Object, mapper);
+        }
+
+        [Test]
+        public async Task TestCreateImageProperty()
+        {
+            var mockLogger = new Mock<ILogger<PropertiesController>>();
+            var mockPropertyInfoRepository = new Mock<IPropertyInfoRepository>();
+            var mockOwnerInfoRepository = new Mock<IOwnerInfoRepository>();
+            var mockPropertyImageInfoRepository = new Mock<IPropertyImageInfoRepository>();
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new PropertyProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+            
+            var testController = new PropertiesController(mockLogger.Object, mockPropertyInfoRepository.Object,
+                mockOwnerInfoRepository.Object, mockPropertyImageInfoRepository.Object, mapper);
+        }
         
         public (IEnumerable<Property>, PaginationMetadata) GetFakeDataInfoProperty()
         {
