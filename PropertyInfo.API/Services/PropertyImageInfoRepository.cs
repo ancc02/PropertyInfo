@@ -3,6 +3,9 @@ using PropertyInfo.API.Entities;
 
 namespace PropertyInfo.API.Services
 {
+    /// <summary>
+    /// Implementation Property Image Repository Contract
+    /// </summary>
     public class PropertyImageInfoRepository : IPropertyImageInfoRepository
     {
         private readonly PropertyInfoContext _context;

@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PropertyInfo.API.Models
 {
+    /// <summary>
+    /// Property Data Transfer Object (DTO) 
+    /// </summary>
     public class PropertyDto
     {
         public int IdProperty { get; set; }

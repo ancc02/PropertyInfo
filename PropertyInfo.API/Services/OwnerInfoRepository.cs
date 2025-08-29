@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PropertyInfo.API.Services
 {
+    /// <summary>
+    /// Implementation Owner Repository Contract
+    /// </summary>
     public class OwnerInfoRepository : IOwnerInfoRepository
     {
 

@@ -1,15 +1,10 @@
 ﻿using AutoMapper;
-using Azure;
-using Castle.Core.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Logging;
 using Moq;
 using PropertyInfo.API.Controllers;
-using PropertyInfo.API.Entities;
 using PropertyInfo.API.Models;
 using PropertyInfo.API.Profiles;
 using PropertyInfo.API.Services;
@@ -21,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PropertyInfoTest
+namespace PropertyInfoTest.UTProperty
 {
     [TestFixture]
     public class PropertyTest
@@ -150,14 +145,28 @@ namespace PropertyInfoTest
             var mockPropertyImageInfoRepository = new Mock<IPropertyImageInfoRepository>();
             var mockMapper = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new PropertyProfile());
+                cfg.AddProfile(new PropertyImageProfile());
             });
             var mapper = mockMapper.CreateMapper();
 
+            FakeDataPropertyObject fakePropertyData = UnitTestProperty.GetFakeDataNewProperty();
+            var pathImage = $"..\\..\\..\\Images\\TestImage.jpg";
+            var physicalFile = new FileInfo(pathImage);
+            IFormFile formFile = physicalFile.AsMockIFormFile();
+
+            mockPropertyInfoRepository.Setup(ow => ow.GetPropertyAsync(1)).ReturnsAsync(fakePropertyData.FakeProperty);
+            mockPropertyImageInfoRepository.Setup(im => im.AddPropertyImageInfo(fakePropertyData.FakePropertyImage)).ReturnsAsync(1);
+
+
             var testController = new PropertiesController(mockLogger.Object, mockPropertyInfoRepository.Object,
                 mockOwnerInfoRepository.Object, mockPropertyImageInfoRepository.Object, mapper);
+
+            var actionResult = await testController.CreateImageProperty(fakePropertyData.FakeProperty.IdProperty,
+                formFile);
+            OkObjectResult okResult = actionResult as OkObjectResult;
+
+            Assert.IsNotNull(actionResult);
+            Assert.AreEqual(200, okResult.StatusCode);
         }
-
-
     }
 }

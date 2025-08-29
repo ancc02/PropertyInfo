@@ -7,6 +7,9 @@ using System.Text;
 
 namespace PropertyInfo.API.Controllers
 {
+    /// <summary>
+    /// Controller for http operations about authentication
+    /// </summary>
     [Route("api/authentication")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -50,6 +53,11 @@ namespace PropertyInfo.API.Controllers
                 throw new ArgumentNullException(nameof(configuration));
         }
 
+        /// <summary>
+        /// POST operation for authenticate user
+        /// </summary>
+        /// <param name="authenticationRequestBody"></param>
+        /// <returns></returns>
         [HttpPost("authenticate")]
         public ActionResult<string> Authenticate(
             AuthenticationRequestBody authenticationRequestBody)
@@ -89,7 +97,13 @@ namespace PropertyInfo.API.Controllers
 
             return Ok(tokenToReturn);
         }
-
+        
+        /// <summary>
+        /// validate credentials user
+        /// </summary>
+        /// <param name="userName">user name</param>
+        /// <param name="password">user password</param>
+        /// <returns></returns>
         private CityInfoUser ValidateUserCredentials(string userName, string password)
         {
             // we don't have a user DB or table.  If you have, check the passed-through

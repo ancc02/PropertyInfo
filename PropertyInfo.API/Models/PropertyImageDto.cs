@@ -2,6 +2,9 @@
 
 namespace PropertyInfo.API.Models
 {
+    /// <summary>
+    /// Property Image Data Transfer Object (DTO) 
+    /// </summary>
     public class PropertyImageDto
     {
         public int IdPropertyImage { get; set; }

@@ -4,9 +4,149 @@
         <name>PropertyInfo.API</name>
     </assembly>
     <members>
+        <member name="T:PropertyInfo.API.Controllers.AuthenticationController">
+            <summary>
+            Controller for http operations about authentication
+            </summary>
+        </member>
+        <member name="M:PropertyInfo.API.Controllers.AuthenticationController.Authenticate(PropertyInfo.API.Controllers.AuthenticationController.AuthenticationRequestBody)">
+            <summary>
+            POST operation for authenticate user
+            </summary>
+            <param name="authenticationRequestBody"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PropertyInfo.API.Controllers.AuthenticationController.ValidateUserCredentials(System.String,System.String)">
+            <summary>
+            validate credentials user
+            </summary>
+            <param name="userName">user name</param>
+            <param name="password">user password</param>
+            <returns></returns>
+        </member>
+        <member name="T:PropertyInfo.API.Controllers.PropertiesController">
+            <summary>
+             Controller for http operations about properties info
+            </summary>
+        </member>
+        <member name="M:PropertyInfo.API.Controllers.PropertiesController.#ctor(Microsoft.Extensions.Logging.ILogger{PropertyInfo.API.Controllers.PropertiesController},PropertyInfo.API.Services.IPropertyInfoRepository,PropertyInfo.API.Services.IOwnerInfoRepository,PropertyInfo.API.Services.IPropertyImageInfoRepository,AutoMapper.IMapper)">
+            <summary>
+            Constructor class PropertiesController
+            </summary>
+            <param name="logger">Dependency Logger</param>
+            <param name="propertyInfoRepository">Property Repository</param>
+            <param name="ownerRepository">Owner Repository</param>
+            <param name="propertyImageInfoRepository">Property Image Repository</param>
+            <param name="mapper">Dependency Mapper</param>
+            <exception cref="T:System.ArgumentNullException">Exception invalid type</exception>
+        </member>
+        <member name="M:PropertyInfo.API.Controllers.PropertiesController.GetProperties(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Get operation to properties info
+            </summary>
+            <param name="name">Name of property</param>
+            <param name="searchQuery">filter to query</param>
+            <param name="pageNumber">number of page</param>
+            <param name="pageSize">size of page</param>
+            <returns></returns>
+        </member>
+        <member name="M:PropertyInfo.API.Controllers.PropertiesController.AddProperty(System.Int32,PropertyInfo.API.Models.PropertyDto)">
+            <summary>
+            POST operation to add property
+            </summary>
+            <param name="idOwner">owner identifier</param>
+            <param name="property">data of property</param>
+            <returns></returns>
+        </member>
+        <member name="M:PropertyInfo.API.Controllers.PropertiesController.UpdateProperty(System.Int32,PropertyInfo.API.Models.PropertyDto)">
+            <summary>
+            POST operation to update property
+            </summary>
+            <param name="idProperty">property identifier</param>
+            <param name="property">data of property</param>
+            <returns></returns>
+        </member>
+        <member name="M:PropertyInfo.API.Controllers.PropertiesController.UpdatePropertyPrice(System.Int32,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{PropertyInfo.API.Models.PropertyForUpdateDto})">
+            <summary>
+            PATCH operation for partial update property
+            </summary>
+            <param name="IdProperty">property identifier</param>
+            <param name="patchDocument">special format to update price property</param>
+            <returns></returns>
+        </member>
+        <member name="M:PropertyInfo.API.Controllers.PropertiesController.CreateImageProperty(System.Int32,Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            POST operation to create image property
+            </summary>
+            <param name="idProperty">property identifier</param>
+            <param name="file">image property</param>
+            <returns></returns>
+        </member>
+        <member name="T:PropertyInfo.API.DbContexts.PropertyInfoContext">
+            <summary>
+            Class PropertyInfoContext - Entity framework context
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.DbContexts.PropertyInfoContext.Owners">
+            <summary>
+            Table Owners
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.DbContexts.PropertyInfoContext.Properties">
+            <summary>
+            Table Property
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.DbContexts.PropertyInfoContext.PropertyImages">
+            <summary>
+            Table Property images
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.DbContexts.PropertyInfoContext.PropertyTraces">
+            <summary>
+            Table Property trace
+            </summary>
+        </member>
+        <member name="M:PropertyInfo.API.DbContexts.PropertyInfoContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions{PropertyInfo.API.DbContexts.PropertyInfoContext})">
+            <summary>
+            Constructor class PropertyInfoContext
+            </summary>
+            <param name="options">configuration for Object Relational Mapping (ORM)</param>
+        </member>
+        <member name="M:PropertyInfo.API.DbContexts.PropertyInfoContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <summary>
+            Model create
+            </summary>
+            <param name="modelBuilder">object to create model</param>
+        </member>
         <member name="T:PropertyInfo.API.Entities.Owner">
             <summary>
             Info of Owner
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Owner.IdOwner">
+            <summary>
+            Primary key Table Owner
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Owner.Name">
+            <summary>
+            Name of owner
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Owner.Address">
+            <summary>
+            Owner address
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Owner.Photo">
+            <summary>
+            Owner photo
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Owner.Birthday">
+            <summary>
+            Owner Birthday
             </summary>
         </member>
         <member name="T:PropertyInfo.API.Entities.Property">
@@ -14,14 +154,99 @@
             Info of Property
             </summary>
         </member>
+        <member name="P:PropertyInfo.API.Entities.Property.IdProperty">
+            <summary>
+            Primary Key Table Property
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Property.Name">
+            <summary>
+            Name of property
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Property.Address">
+            <summary>
+            Property address
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Property.Price">
+            <summary>
+            Property price
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Property.CodeInternal">
+            <summary>
+            Property code internal
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Property.Year">
+            <summary>
+            Property year
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.Property.Owner">
+            <summary>
+            Foreign Key Table Owner
+            </summary>
+        </member>
         <member name="T:PropertyInfo.API.Entities.PropertyImage">
             <summary>
             info of PropertyImage
             </summary>
         </member>
+        <member name="P:PropertyInfo.API.Entities.PropertyImage.IdPropertyImage">
+            <summary>
+            Primary Key Table Property Image
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.PropertyImage.File">
+            <summary>
+            Property Image
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.PropertyImage.Enabled">
+            <summary>
+            Property availability
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.PropertyImage.Property">
+            <summary>
+            Foreign Key Table Property
+            </summary>
+        </member>
         <member name="T:PropertyInfo.API.Entities.PropertyTrace">
             <summary>
             info of PropertyTrace
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.PropertyTrace.IdPropertyTrace">
+            <summary>
+            Primary Key Table Property trace
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.PropertyTrace.DateSale">
+            <summary>
+            Property date of sale
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.PropertyTrace.Name">
+            <summary>
+            Name of property
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.PropertyTrace.Value">
+            <summary>
+            Value of sale
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.PropertyTrace.Tax">
+            <summary>
+            Tax of sale
+            </summary>
+        </member>
+        <member name="P:PropertyInfo.API.Entities.PropertyTrace.Property">
+            <summary>
+            Foeign Key Table Property
             </summary>
         </member>
         <member name="T:PropertyInfo.API.Migrations.PropertyInfoUpdateDatabase">
@@ -35,6 +260,71 @@
         </member>
         <member name="M:PropertyInfo.API.Migrations.PropertyInfoUpdateDatabase.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
+        </member>
+        <member name="T:PropertyInfo.API.Models.PropertyDto">
+            <summary>
+            Property Data Transfer Object (DTO) 
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Models.PropertyForUpdateDto">
+            <summary>
+            Property update Data Transfer Object (DTO) 
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Models.PropertyImageDto">
+            <summary>
+            Property Image Data Transfer Object (DTO) 
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Models.PropertyListDto">
+            <summary>
+            Property List Data Transfer Object (DTO) 
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Profiles.PropertyImageProfile">
+            <summary>
+            Profile to map entitie to dto
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Profiles.PropertyProfile">
+            <summary>
+            Profile to map entitie to dto
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Services.IOwnerInfoRepository">
+            <summary>
+            Owner Repository Contract
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Services.IPropertyImageInfoRepository">
+            <summary>
+            Property Image Repository Contract
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Services.IPropertyInfoRepository">
+            <summary>
+            Property Repository Contract
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Services.OwnerInfoRepository">
+            <summary>
+            Implementation Owner Repository Contract
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Services.PaginationMetadata">
+            <summary>
+            Pagination data
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Services.PropertyImageInfoRepository">
+            <summary>
+            Implementation Property Image Repository Contract
+            </summary>
+        </member>
+        <member name="T:PropertyInfo.API.Services.PropertyInfoRepository">
+            <summary>
+            Implementation Property Repository Contract
+            </summary>
         </member>
     </members>
 </doc>

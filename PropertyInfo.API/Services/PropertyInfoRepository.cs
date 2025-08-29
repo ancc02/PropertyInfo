@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PropertyInfo.API.Services
 {
+    /// <summary>
+    /// Implementation Property Repository Contract
+    /// </summary>
     public class PropertyInfoRepository : IPropertyInfoRepository
     {
         private readonly PropertyInfoContext _context;
@@ -58,7 +61,8 @@ namespace PropertyInfo.API.Services
 
         public async Task UpdatePropertyInfo(int idProperty, Property propertyInfo)
         {
-            var currentProperty = await GetPropertyAsync(idProperty);
+            var currentProperty = await GetPropertyAsync(idProperty) ?? 
+                throw new ArgumentNullException(nameof(PropertyInfoRepository));
             currentProperty.Name = propertyInfo.Name;
             currentProperty.Address = propertyInfo.Address;
             currentProperty.CodeInternal = propertyInfo.CodeInternal;

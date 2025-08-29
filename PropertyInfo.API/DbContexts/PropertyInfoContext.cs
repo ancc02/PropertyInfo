@@ -3,18 +3,41 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PropertyInfo.API.DbContexts
 {
+    /// <summary>
+    /// Class PropertyInfoContext - Entity framework context
+    /// </summary>
     public class PropertyInfoContext : DbContext
     {
+        /// <summary>
+        /// Table Owners
+        /// </summary>
         public DbSet<Owner> Owners { get; set; }
+        /// <summary>
+        /// Table Property
+        /// </summary>
         public DbSet<Property> Properties { get; set; }
+        /// <summary>
+        /// Table Property images
+        /// </summary>
         public DbSet<PropertyImage> PropertyImages { get; set; }
+        /// <summary>
+        /// Table Property trace
+        /// </summary>
         public DbSet<PropertyTrace> PropertyTraces { get; set; }
 
+        /// <summary>
+        /// Constructor class PropertyInfoContext
+        /// </summary>
+        /// <param name="options">configuration for Object Relational Mapping (ORM)</param>
         public PropertyInfoContext(DbContextOptions<PropertyInfoContext> options)
             : base(options)
         {
         }
 
+        /// <summary>
+        /// Model create
+        /// </summary>
+        /// <param name="modelBuilder">object to create model</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Owner>()

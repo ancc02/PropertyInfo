@@ -1,5 +1,8 @@
 ﻿namespace PropertyInfo.API.Services
 {
+    /// <summary>
+    /// Pagination data
+    /// </summary>
     public class PaginationMetadata
     {
         public int TotalItemCount { get; set; }

@@ -13,5 +13,6 @@ namespace PropertyInfoTest.MockModels
         public Owner FakeOwner { get; set; }
         public Property FakeProperty { get; set; }
         public PropertyDto FakePropertyDto { get; set; }
+        public PropertyImage FakePropertyImage { get; set; }
     }
 }

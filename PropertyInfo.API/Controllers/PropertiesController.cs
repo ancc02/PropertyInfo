@@ -10,6 +10,9 @@ using System.Text.Json;
 
 namespace PropertyInfo.API.Controllers
 {
+    /// <summary>
+    ///  Controller for http operations about properties info
+    /// </summary>
     [ApiController]
     [Authorize(Policy = "MustBeOwner")]
     [Route("api/v{version:apiVersion}/properties")]
@@ -25,6 +28,15 @@ namespace PropertyInfo.API.Controllers
         private readonly IMapper _mapper;
         const int maxCitiesPageSize = 20;
 
+        /// <summary>
+        /// Constructor class PropertiesController
+        /// </summary>
+        /// <param name="logger">Dependency Logger</param>
+        /// <param name="propertyInfoRepository">Property Repository</param>
+        /// <param name="ownerRepository">Owner Repository</param>
+        /// <param name="propertyImageInfoRepository">Property Image Repository</param>
+        /// <param name="mapper">Dependency Mapper</param>
+        /// <exception cref="ArgumentNullException">Exception invalid type</exception>
         public PropertiesController(ILogger<PropertiesController> logger,
             IPropertyInfoRepository propertyInfoRepository,
             IOwnerInfoRepository ownerRepository,
@@ -47,6 +59,14 @@ namespace PropertyInfo.API.Controllers
                 throw new ArgumentNullException(nameof(mapper));
         }
 
+        /// <summary>
+        /// Get operation to properties info
+        /// </summary>
+        /// <param name="name">Name of property</param>
+        /// <param name="searchQuery">filter to query</param>
+        /// <param name="pageNumber">number of page</param>
+        /// <param name="pageSize">size of page</param>
+        /// <returns></returns>
         [HttpGet(Name = "GetProperties")]
         public async Task<ActionResult> GetProperties(
                     string? name, string? searchQuery, int pageNumber = 1, int pageSize = 10)
@@ -75,6 +95,12 @@ namespace PropertyInfo.API.Controllers
 
         }
 
+        /// <summary>
+        /// POST operation to add property
+        /// </summary>
+        /// <param name="idOwner">owner identifier</param>
+        /// <param name="property">data of property</param>
+        /// <returns></returns>
         [HttpPost("owner/{idOwner}", Name = "AddProperty")]
         public async Task<ActionResult> AddProperty(int idOwner, PropertyDto property)
         {
@@ -108,6 +134,12 @@ namespace PropertyInfo.API.Controllers
             }
         }
 
+        /// <summary>
+        /// POST operation to update property
+        /// </summary>
+        /// <param name="idProperty">property identifier</param>
+        /// <param name="property">data of property</param>
+        /// <returns></returns>
         [HttpPost("property/{idProperty}", Name = "UpdateProperty")]
         public async Task<ActionResult> UpdateProperty(int idProperty, PropertyDto property)
         {
@@ -141,6 +173,12 @@ namespace PropertyInfo.API.Controllers
             }
         }
 
+        /// <summary>
+        /// PATCH operation for partial update property
+        /// </summary>
+        /// <param name="IdProperty">property identifier</param>
+        /// <param name="patchDocument">special format to update price property</param>
+        /// <returns></returns>
         [HttpPatch("price/{IdProperty}")]
         public async Task<ActionResult> UpdatePropertyPrice(int IdProperty,
            JsonPatchDocument<PropertyForUpdateDto> patchDocument)
@@ -180,6 +218,12 @@ namespace PropertyInfo.API.Controllers
             }
         }
 
+        /// <summary>
+        /// POST operation to create image property
+        /// </summary>
+        /// <param name="idProperty">property identifier</param>
+        /// <param name="file">image property</param>
+        /// <returns></returns>
         [HttpPost("image/{idProperty}", Name = "CreateImageProperty")]
         public async Task<ActionResult> CreateImageProperty(int idProperty, IFormFile file)
         {
@@ -199,9 +243,9 @@ namespace PropertyInfo.API.Controllers
 
                 // Create the file path.  Avoid using file.FileName, as an attacker can provide a
                 // malicious one, including full paths or relative paths.  
-                var pathImage = $"Images\\uploaded_file_{idProperty}-{propertyInfo.CodeInternal}.jpg";
+                var pathImage = @$"..\..\..\Images\uploaded_file_{idProperty}-{propertyInfo.CodeInternal}.jpg";
                 var path = Path.Combine(
-                    Directory.GetCurrentDirectory(),
+                    AppDomain.CurrentDomain.BaseDirectory,
                     pathImage);
 
                 using (var stream = new FileStream(path, FileMode.Create))
@@ -211,7 +255,7 @@ namespace PropertyInfo.API.Controllers
                 var propertyImageInfo = new PropertyImage();
                 propertyImageInfo.IdProperty = propertyInfo.IdProperty;
                 propertyImageInfo.Enabled = true;
-                propertyImageInfo.File = pathImage;
+                propertyImageInfo.File = pathImage.Replace(@"..\","");
 
                 var resultId = await _propertyImageInfoRepository.AddPropertyImageInfo(propertyImageInfo);
 

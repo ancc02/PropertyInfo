@@ -1,4 +1,6 @@
-﻿using PropertyInfo.API.Entities;
+﻿using Microsoft.AspNetCore.Http;
+using Moq;
+using PropertyInfo.API.Entities;
 using PropertyInfo.API.Models;
 using PropertyInfo.API.Services;
 using PropertyInfoTest.MockModels;
@@ -78,7 +80,16 @@ namespace PropertyInfoTest.Utils
                 Year = new DateTime(2005, 5, 10)
             };
 
+            fakePropertyData.FakePropertyImage = new PropertyImage()
+            {
+                IdPropertyImage = 1,
+                IdProperty = 1,
+                File = "rutaFake/image.jpg",
+                Enabled = true
+            };
+
             return fakePropertyData;
         }
+       
     }
 }

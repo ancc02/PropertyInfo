@@ -2,6 +2,9 @@
 
 namespace PropertyInfo.API.Models
 {
+    /// <summary>
+    /// Property update Data Transfer Object (DTO) 
+    /// </summary>
     public class PropertyForUpdateDto
     {
         [Required]

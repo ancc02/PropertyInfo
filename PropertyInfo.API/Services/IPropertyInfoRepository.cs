@@ -2,6 +2,9 @@
 
 namespace PropertyInfo.API.Services
 {
+    /// <summary>
+    /// Property Repository Contract
+    /// </summary>
     public interface IPropertyInfoRepository
     {
         Task<(IEnumerable<Property>, PaginationMetadata)> GetPropertiesAsync(
