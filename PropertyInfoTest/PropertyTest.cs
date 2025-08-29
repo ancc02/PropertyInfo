@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
+using Azure;
 using Castle.Core.Logging;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Logging;
 using Moq;
 using PropertyInfo.API.Controllers;
@@ -9,6 +13,8 @@ using PropertyInfo.API.Entities;
 using PropertyInfo.API.Models;
 using PropertyInfo.API.Profiles;
 using PropertyInfo.API.Services;
+using PropertyInfoTest.MockModels;
+using PropertyInfoTest.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,10 +38,10 @@ namespace PropertyInfoTest
                 cfg.AddProfile(new PropertyProfile());
             });
             var mapper = mockMapper.CreateMapper();
-            
+
             mockPropertyInfoRepository.Setup(pro => pro.GetPropertiesAsync("pro", null, 1, 10))
-                .ReturnsAsync(GetFakeDataInfoProperty());
-            
+                .ReturnsAsync(UnitTestProperty.GetFakeDataInfoProperty());
+
             var testController = new PropertiesController(mockLogger.Object, mockPropertyInfoRepository.Object,
                 mockOwnerInfoRepository.Object, mockPropertyImageInfoRepository.Object, mapper);
 
@@ -58,9 +64,21 @@ namespace PropertyInfoTest
                 cfg.AddProfile(new PropertyProfile());
             });
             var mapper = mockMapper.CreateMapper();
-            
+
+            FakeDataPropertyObject fakePropertyData = UnitTestProperty.GetFakeDataNewProperty();
+
+            mockOwnerInfoRepository.Setup(ow => ow.GetOwnerAsync(1)).ReturnsAsync(fakePropertyData.FakeOwner);
+            mockPropertyInfoRepository.Setup(pro => pro.AddPropertyInfo(fakePropertyData.FakeOwner.IdOwner, fakePropertyData.FakeProperty))
+                .ReturnsAsync(1);
+
             var testController = new PropertiesController(mockLogger.Object, mockPropertyInfoRepository.Object,
                 mockOwnerInfoRepository.Object, mockPropertyImageInfoRepository.Object, mapper);
+
+            var actionResult = await testController.AddProperty(1, fakePropertyData.FakePropertyDto);
+            CreatedAtRouteResult okResult = actionResult as CreatedAtRouteResult;
+
+            Assert.IsNotNull(actionResult);
+            Assert.AreEqual(201, okResult.StatusCode);
         }
 
         [Test]
@@ -75,9 +93,20 @@ namespace PropertyInfoTest
                 cfg.AddProfile(new PropertyProfile());
             });
             var mapper = mockMapper.CreateMapper();
-            
+
+            FakeDataPropertyObject fakePropertyData = UnitTestProperty.GetFakeDataNewProperty();
+
+            mockPropertyInfoRepository.Setup(ow => ow.GetPropertyAsync(1)).ReturnsAsync(fakePropertyData.FakeProperty);
+            mockPropertyInfoRepository.Setup(pro => pro.UpdatePropertyInfo(fakePropertyData.FakeProperty.IdProperty, fakePropertyData.FakeProperty));
+
             var testController = new PropertiesController(mockLogger.Object, mockPropertyInfoRepository.Object,
                 mockOwnerInfoRepository.Object, mockPropertyImageInfoRepository.Object, mapper);
+
+            var actionResult = await testController.UpdateProperty(1, fakePropertyData.FakePropertyDto);
+            CreatedAtRouteResult okResult = actionResult as CreatedAtRouteResult;
+
+            Assert.IsNotNull(actionResult);
+            Assert.AreEqual(201, okResult.StatusCode);
         }
 
         [Test]
@@ -92,9 +121,24 @@ namespace PropertyInfoTest
                 cfg.AddProfile(new PropertyProfile());
             });
             var mapper = mockMapper.CreateMapper();
-            
+
+            FakeDataPropertyObject fakePropertyData = UnitTestProperty.GetFakeDataNewProperty();
+
+            var patch = new JsonPatchDocument<PropertyForUpdateDto>();
+            patch.Replace(p => p.Price, 2000000);
+
+            mockPropertyInfoRepository.Setup(ow => ow.GetPropertyAsync(1)).ReturnsAsync(fakePropertyData.FakeProperty);
+
             var testController = new PropertiesController(mockLogger.Object, mockPropertyInfoRepository.Object,
                 mockOwnerInfoRepository.Object, mockPropertyImageInfoRepository.Object, mapper);
+            testController.ObjectValidator = new ObjectValidator();
+
+
+            var actionResult = await testController.UpdatePropertyPrice(1, patch);
+            NoContentResult okResult = actionResult as NoContentResult;
+
+            Assert.IsNotNull(actionResult);
+            Assert.AreEqual(204, okResult.StatusCode);
         }
 
         [Test]
@@ -109,45 +153,11 @@ namespace PropertyInfoTest
                 cfg.AddProfile(new PropertyProfile());
             });
             var mapper = mockMapper.CreateMapper();
-            
+
             var testController = new PropertiesController(mockLogger.Object, mockPropertyInfoRepository.Object,
                 mockOwnerInfoRepository.Object, mockPropertyImageInfoRepository.Object, mapper);
         }
-        
-        public (IEnumerable<Property>, PaginationMetadata) GetFakeDataInfoProperty()
-        {
-            var fakeData = new List<Property> {new Property()
-            {
-                IdProperty = 1,
-                Name = "Property number one fake",
-                Address = "address property number one fake",
-                Price = 1500000,
-                CodeInternal = "0101",
-                Year = new DateTime(2005, 5, 10),
-                IdOwner = 1
-            },
-               new Property()
-               {
-                   IdProperty = 2,
-                   Name = "Property number two fake",
-                   Address = "address property number two fake",
-                   Price = 1500000,
-                   CodeInternal = "0101",
-                   Year = new DateTime(2005, 5, 10),
-                   IdOwner = 2
-               },
-               new Property()
-               {
-                   IdProperty = 3,
-                   Name = "Property number three fake ",
-                   Address = "address property number three fake",
-                   Price = 1500000,
-                   CodeInternal = "0101",
-                   Year = new DateTime(2005, 5, 10),
-                   IdOwner = 3
-               }};
 
-            return (fakeData, new PaginationMetadata(3, 1, 10));
-        }
+
     }
 }
